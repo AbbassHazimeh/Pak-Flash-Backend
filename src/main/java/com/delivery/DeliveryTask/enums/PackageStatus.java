@@ -1,5 +1,8 @@
 package com.delivery.DeliveryTask.enums;
     public enum PackageStatus {
-        AVAILABLE,
-        ON_TRIP
+        PENDING,
+        ASSIGNED,
+        OUT_FOR_DELIVERY,
+        DELIVERED,
+        CONFIRMED
     }

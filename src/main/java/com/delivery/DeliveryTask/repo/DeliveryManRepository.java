@@ -1,10 +1,10 @@
 package com.delivery.DeliveryTask.repo;
 
 import com.delivery.DeliveryTask.model.DeliveryMan;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DeliveryManRepository extends JpaRepository<DeliveryMan,String> {
+public interface DeliveryManRepository extends MongoRepository<DeliveryMan,String> {
 
 }

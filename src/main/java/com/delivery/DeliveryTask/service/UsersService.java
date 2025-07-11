@@ -1,34 +1,42 @@
 package com.delivery.DeliveryTask.service;
+
 import com.delivery.DeliveryTask.model.Customer;
 import com.delivery.DeliveryTask.model.DeliveryMan;
-import com.delivery.DeliveryTask.model.DeliveryTrip;
-import com.delivery.DeliveryTask.model.PackageOrder;
 import com.delivery.DeliveryTask.repo.CustomerRepository;
 import com.delivery.DeliveryTask.repo.DeliveryManRepository;
-import com.delivery.DeliveryTask.repo.DeliveryTripRepository;
-import com.delivery.DeliveryTask.repo.PackageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
-public class AdminService {
+public class UsersService {
+
     private final CustomerRepository customerRepository;
     private final DeliveryManRepository deliveryManRepository;
-    private final DeliveryTripRepository deliveryTripRepository;
-    private final PackageRepository packageRepository;
+
     public Customer createCustomer(Customer customer) {
         return customerRepository.save(customer);
     }
-
     public DeliveryMan createDeliveryMan(DeliveryMan deliveryMan) {
         return deliveryManRepository.save(deliveryMan);
     }
-    public PackageOrder createPackage(PackageOrder newpackage) {
-        return packageRepository.save(newpackage);
+
+    public Optional<Customer> getCustomerById(String id){
+        return customerRepository.findById(id);
+    }
+    public List<Customer> getAllCustomers(){
+        return customerRepository.findAll();
     }
 
-    public DeliveryTrip createTrip(DeliveryTrip deliveryTrip) {
-        return deliveryTripRepository.save(deliveryTrip);
+    public List<DeliveryMan> getAllDeliveryMen(){
+        return deliveryManRepository.findAll();
+    }
+
+    public Optional<DeliveryMan> getDeliveryManById(String id) {
+        return deliveryManRepository.findById(id);
     }
 }

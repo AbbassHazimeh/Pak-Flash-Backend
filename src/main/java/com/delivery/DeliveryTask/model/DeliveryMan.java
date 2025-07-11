@@ -1,24 +1,22 @@
 package com.delivery.DeliveryTask.model;
 
 import com.delivery.DeliveryTask.enums.DeliveryManStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "delivery_man")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryMan {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String Id;
-    private String Name;
-    private String Phone;
+    private ObjectId id;
+    private String name;
+    private String phone;
     private DeliveryManStatus status;
-
+    private ObjectId delivery_trip_id;
 }
