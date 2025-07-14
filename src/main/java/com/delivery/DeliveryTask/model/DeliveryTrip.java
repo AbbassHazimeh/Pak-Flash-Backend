@@ -1,6 +1,7 @@
 package com.delivery.DeliveryTask.model;
 
 import com.delivery.DeliveryTask.enums.DeliveryTripStatus;
+import com.delivery.DeliveryTask.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,5 +24,6 @@ public class DeliveryTrip {
     private DeliveryTripStatus status;
     private List<PackageOrder> packages;
     private ObjectId deliveryManId;
+    private Role role;
 
 }

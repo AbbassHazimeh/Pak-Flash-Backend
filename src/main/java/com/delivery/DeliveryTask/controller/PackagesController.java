@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,37 +21,43 @@ public class PackagesController {
     private PackagesService packagesService;
 
     //ADMIN
-    @PostMapping("/package")
+    @PostMapping("admin/package")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PackageOrder> createPackage(@RequestBody PackageOrder newPackage){
         PackageOrder createdPackage = packagesService.createPackage(newPackage);
         return new ResponseEntity<>(createdPackage, HttpStatus.CREATED);
     }
 
     //ADMIN
-    @GetMapping("/")
+    @GetMapping("admin/")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PackageOrder>> viewAllPackages(){
         return new ResponseEntity<>(packagesService.getAllPackages(),HttpStatus.OK);
     }
 
     //ADMIN
-    @GetMapping("/assigned")
+    @GetMapping("admin/assigned")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PackageOrder>> viewAllAssignedPackages(){
         return new ResponseEntity<>(packagesService.getAllAssignedPackages(),HttpStatus.OK);
     }
 
     //CUSTOMER
-    @GetMapping("/customers/{customerId}/assigned")
+    @GetMapping("/customer/{customerId}/assigned")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<List<PackageOrder>> viewAllAssignedPackagesByCustomer(@PathVariable ObjectId customerId){
         return new ResponseEntity<>(packagesService.getAllAssignedPackagesByCustomer(customerId),HttpStatus.OK);
     }
     //DELIVERYMAN
-    @PutMapping("/{packageId}/delivered")
+    @PutMapping("deliveryMan/{packageId}/delivered")
+    @PreAuthorize("hasRole('DELIVERYMAN')")
     public ResponseEntity<PackageOrder> deliverPackage(@PathVariable ObjectId packageId){
         return new ResponseEntity<>(packagesService.markPackageAsDelivered(packageId),HttpStatus.OK);
     }
 
     //CUSTOMER
-    @PutMapping("/{packageId}/confirm")
+    @PutMapping("customer/{packageId}/confirm")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<PackageOrder> ConfirmPackage(@PathVariable ObjectId packageId){
         return new ResponseEntity<>(packagesService.markPackageAsConfirmed(packageId),HttpStatus.OK);
     }

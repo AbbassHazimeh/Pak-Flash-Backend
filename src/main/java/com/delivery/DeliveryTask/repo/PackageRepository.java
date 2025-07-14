@@ -12,6 +12,4 @@ import java.util.List;
 public interface PackageRepository extends MongoRepository<PackageOrder,String> {
     List<PackageOrder> findByCustomerIdAndStatusIn(ObjectId customerId, List<PackageStatus> statusList);
     List<PackageOrder> findByStatusIn(List<PackageStatus> statusList);
-
-//    List<PackageOrder> findByDeliveryManIdAndStatusIn(String deliveryManId, List<PackageStatus> assigned);
 }
