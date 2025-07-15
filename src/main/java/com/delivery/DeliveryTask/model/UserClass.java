@@ -12,9 +12,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserClass {
+
     @Id
+    private String id;
     private String username;
     private String password;
     private Role role;
+
+    private Customer customer;
+    private DeliveryMan deliveryMan;
 
 }

@@ -1,13 +1,10 @@
 package com.delivery.DeliveryTask.service;
 
 import com.delivery.DeliveryTask.enums.Role;
-import com.delivery.DeliveryTask.model.Customer;
-import com.delivery.DeliveryTask.model.DeliveryMan;
 import com.delivery.DeliveryTask.model.UserClass;
-import com.delivery.DeliveryTask.repo.CustomerRepository;
-import com.delivery.DeliveryTask.repo.DeliveryManRepository;
 import com.delivery.DeliveryTask.repo.UserClassRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,43 +13,53 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UsersService {
-
-    private final CustomerRepository customerRepository;
-    private final DeliveryManRepository deliveryManRepository;
     private final UserClassRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserClass createUser(UserClass user){
+    public UserClass createUser(UserClass user) {
+        validateUserByRole(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
-    public Customer createCustomer(Customer customer) {
-        UserClass user = userRepository.findById(customer.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (user.getRole() != Role.CUSTOMER) {
-            throw new RuntimeException("User role is not CUSTOMER");
+
+    private void validateUserByRole(UserClass user) {
+        if (user.getRole() == Role.CUSTOMER) {
+            if (user.getCustomer() == null || user.getCustomer().getName() == null || user.getCustomer().getPhone() == null || user.getCustomer().getAddress() == null) {
+                throw new IllegalArgumentException("Customer details are incomplete.");
+            }
+        } else if (user.getRole() == Role.DELIVERYMAN) {
+            if (user.getDeliveryMan() == null || user.getDeliveryMan().getName() == null || user.getDeliveryMan().getPhone() == null || user.getDeliveryMan().getStatus() == null || user.getDeliveryMan().getDeliveryTripId() == null) {
+                throw new IllegalArgumentException("DeliveryMan details are incomplete.");
+            }
         }
-        return customerRepository.save(customer);
     }
-    public DeliveryMan createDeliveryMan(DeliveryMan deliveryMan) {
-        UserClass user = userRepository.findById(deliveryMan.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (user.getRole() != Role.DELIVERYMAN) {
-            throw new RuntimeException("User role is not DELIVERYMAN");
+    public UserClass createCustomer(UserClass customer) {
+        if (customer.getRole() != Role.CUSTOMER) {
+            throw new IllegalArgumentException("Role must be CUSTOMER.");
         }
-        return deliveryManRepository.save(deliveryMan);
+        return createUser(customer);
+    }
+    public UserClass createDeliveryMan(UserClass deliveryMan) {
+        if (deliveryMan.getRole() != Role.DELIVERYMAN) {
+            throw new IllegalArgumentException("Role must be DELIVERYMAN.");
+        }
+        return createUser(deliveryMan);
     }
 
-    public Optional<Customer> getCustomerById(String id){
-        return customerRepository.findById(id);
-    }
-    public List<Customer> getAllCustomers(){
-        return customerRepository.findAll();
+    public void updateUser(UserClass user) {
+        validateUserByRole(user);
+        userRepository.save(user);
     }
 
-    public List<DeliveryMan> getAllDeliveryMen(){
-        return deliveryManRepository.findAll();
+    public Optional<UserClass> getUserById(String id) {
+        return userRepository.findById(id);
+    }
+    public List<UserClass> getAllCustomers(){
+        return userRepository.findByRole(Role.CUSTOMER);
     }
 
-    public Optional<DeliveryMan> getDeliveryManById(String id) {
-        return deliveryManRepository.findById(id);
+    public List<UserClass> getAllDeliveryMen(){
+        return userRepository.findByRole(Role.DELIVERYMAN);
     }
+
 }

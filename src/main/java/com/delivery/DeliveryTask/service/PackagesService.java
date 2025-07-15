@@ -1,34 +1,43 @@
 package com.delivery.DeliveryTask.service;
 
 import com.delivery.DeliveryTask.enums.PackageStatus;
+import com.delivery.DeliveryTask.enums.Role;
 import com.delivery.DeliveryTask.model.Customer;
 import com.delivery.DeliveryTask.model.PackageOrder;
-import com.delivery.DeliveryTask.repo.CustomerRepository;
+import com.delivery.DeliveryTask.model.UserClass;
 import com.delivery.DeliveryTask.repo.PackageRepository;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PackagesService {
 
     private final PackageRepository packageRepository;
-    private final CustomerRepository customerRepository;
+    private final UsersService usersService;
 
     public PackageOrder createPackage(PackageOrder newPackage) {
         newPackage.setStatus(PackageStatus.PENDING);
+        String customerId = String.valueOf(newPackage.getCustomerId());
+        UserClass user = usersService.getUserById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        ObjectId customerId = newPackage.getCustomerId();
-        Customer customer = customerRepository.findById(customerId);
+        if(user.getRole() != Role.CUSTOMER){
+            throw new IllegalArgumentException("not Customer");
+        }
+        Customer customer = user.getCustomer();
         if(customer == null){
             throw new IllegalArgumentException("Customer id is not founded");
         }
+
         newPackage.setPhone(customer.getPhone());
         return packageRepository.save(newPackage);
+    }
+    public void savePackage(PackageOrder packageOrder) {
+        packageRepository.save(packageOrder);
     }
 
     public List<PackageOrder> getAllPackages() {
@@ -69,5 +78,9 @@ public class PackagesService {
                 throw new IllegalStateException("Package is not assigned it can not be confirmed before assignment !");
             }
         }).orElse(null);
+    }
+
+    public PackageOrder findPackageById(String Id) {
+        return (packageRepository.findPackageById(Id));
     }
 }

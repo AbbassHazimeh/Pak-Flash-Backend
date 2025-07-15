@@ -7,23 +7,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Document(collection = "delivery_trip")
+@Document(collection = "deliveryTrip")
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryTrip {
 
     @Id
-    private ObjectId id;
+    private String id;
     private String description;
     private int weight;
     private DeliveryTripStatus status;
-    private List<PackageOrder> packages;
-    private ObjectId deliveryManId;
-    private Role role;
+    @DBRef
+    private List<PackageOrder> packages = new ArrayList<>();
+    private String deliveryManId;
 
 }

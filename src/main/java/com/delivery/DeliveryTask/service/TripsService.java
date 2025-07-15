@@ -3,31 +3,21 @@ package com.delivery.DeliveryTask.service;
 import com.delivery.DeliveryTask.enums.DeliveryManStatus;
 import com.delivery.DeliveryTask.enums.DeliveryTripStatus;
 import com.delivery.DeliveryTask.enums.PackageStatus;
-import com.delivery.DeliveryTask.model.Customer;
-import com.delivery.DeliveryTask.model.DeliveryMan;
-import com.delivery.DeliveryTask.model.DeliveryTrip;
-import com.delivery.DeliveryTask.model.PackageOrder;
-import com.delivery.DeliveryTask.repo.CustomerRepository;
-import com.delivery.DeliveryTask.repo.DeliveryManRepository;
+import com.delivery.DeliveryTask.model.*;
 import com.delivery.DeliveryTask.repo.DeliveryTripRepository;
-import com.delivery.DeliveryTask.repo.PackageRepository;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class TripsService {
     private final DeliveryTripRepository deliveryTripRepository;
-    private final PackageRepository packageRepository;
-    private final DeliveryManRepository deliveryManRepository;
-    private final CustomerRepository customerRepository;
+    private final PackagesService packagesService;
+    private final UsersService usersService;
 
     //ADMIN
     @Transactional
@@ -39,46 +29,49 @@ public class TripsService {
             throw new IllegalArgumentException("At least one package must be assigned to the trip.");
         }
 
-        ObjectId deliveryManId = deliveryTrip.getDeliveryManId();
+        String deliveryManId = deliveryTrip.getDeliveryManId();
         if (deliveryManId == null) {
             throw new IllegalArgumentException("DeliveryMan ID must not be null.");
         }
 
-        DeliveryMan deliveryMan = deliveryManRepository.findById(String.valueOf(deliveryManId))
+        UserClass deliveryManUser = usersService.getUserById(deliveryManId)
                 .orElseThrow(() -> new IllegalArgumentException("DeliveryMan ID does not exist."));
 
+        DeliveryMan deliveryMan = deliveryManUser.getDeliveryMan();
         if (deliveryMan.getStatus() != DeliveryManStatus.AVAILABLE) {
             throw new RuntimeException("Delivery man is not available.");
         }
 
         DeliveryTrip savedTrip = deliveryTripRepository.save(deliveryTrip);
-        ObjectId generatedTripId = savedTrip.getId();
-        deliveryMan.setDelivery_trip_id(savedTrip.getId());
+        String generatedTripId = savedTrip.getId();
+        deliveryMan.setDeliveryTripId(generatedTripId);
         List<PackageOrder> updatedPackages = new ArrayList<>();
 
         for (PackageOrder order : packages) {
-            ObjectId customerId = order.getCustomerId();
-            ObjectId packageId = order.getId();
+            String customerId = order.getCustomerId();
+            String packageId = order.getId();
 
             if (customerId == null || packageId == null) {
                 throw new IllegalArgumentException("Both Customer ID and Package ID are required.");
             }
 
-            PackageOrder existingPackage = packageRepository.findById(packageId.toHexString())
-                    .orElseThrow(() -> new IllegalArgumentException("Package ID does not exist."));
-            Customer customer = customerRepository.findById(customerId.toHexString())
+            PackageOrder existingPackage = packagesService.findPackageById(packageId);
+
+            UserClass customerUser = usersService.getUserById(customerId)
                     .orElseThrow(() -> new IllegalArgumentException("Customer ID does not exist."));
 
+            Customer customer = customerUser.getCustomer();
             existingPackage.setPhone(customer.getPhone());
             existingPackage.setStatus(PackageStatus.ASSIGNED);
-            existingPackage.setDelivery_trip_id(generatedTripId);
+            existingPackage.setDeliveryTripId(generatedTripId);
 
-            packageRepository.save(existingPackage);
+            packagesService.savePackage(existingPackage);
             updatedPackages.add(existingPackage);
         }
         savedTrip.setPackages(updatedPackages);
         deliveryMan.setStatus(DeliveryManStatus.ON_TRIP);
-        deliveryManRepository.save(deliveryMan);
+        deliveryManUser.setDeliveryMan(deliveryMan);
+        usersService.updateUser(deliveryManUser);
 
         return deliveryTripRepository.save(savedTrip);
     }
@@ -98,7 +91,7 @@ public class TripsService {
                 trip.setStatus(DeliveryTripStatus.ASSIGNED);
                 return deliveryTripRepository.save(trip);
             }else {
-                throw new RuntimeException("Trip is not created");//logically he dont have the id of the trip so he can not accept it
+                throw new RuntimeException("Trip is not created");//logically he don't have the id of the trip so he can not accept it
             }
         }
         return null;
@@ -125,11 +118,13 @@ public class TripsService {
         if(trip != null){
             if(trip.getStatus() == DeliveryTripStatus.OUT_FOR_DELIVERY){
                 trip.setStatus(DeliveryTripStatus.COMPLETED);
-                ObjectId deliveryManId = trip.getDeliveryManId();
-                DeliveryMan deliveryMan = deliveryManRepository.findById(deliveryManId.toHexString()).orElseThrow(()->
+                String deliveryManId = trip.getDeliveryManId();
+                UserClass deliveryManUser = usersService.getUserById(deliveryManId).orElseThrow(()->
                         new RuntimeException("DeliveryMan is not founded"));
+                DeliveryMan deliveryMan = deliveryManUser.getDeliveryMan();
                 deliveryMan.setStatus(DeliveryManStatus.AVAILABLE);
-                deliveryManRepository.save(deliveryMan);
+                deliveryManUser.setDeliveryMan(deliveryMan);
+                usersService.updateUser(deliveryManUser);
                 return deliveryTripRepository.save(trip);
             }else {
                 throw new RuntimeException("Trip is not in delivery");

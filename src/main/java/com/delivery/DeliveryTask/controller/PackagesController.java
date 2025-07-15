@@ -1,6 +1,5 @@
 package com.delivery.DeliveryTask.controller;
 
-import com.delivery.DeliveryTask.model.Customer;
 import com.delivery.DeliveryTask.model.PackageOrder;
 import com.delivery.DeliveryTask.service.PackagesService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ public class PackagesController {
     private PackagesService packagesService;
 
     //ADMIN
-    @PostMapping("admin/package")
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PackageOrder> createPackage(@RequestBody PackageOrder newPackage){
         PackageOrder createdPackage = packagesService.createPackage(newPackage);
@@ -29,34 +28,34 @@ public class PackagesController {
     }
 
     //ADMIN
-    @GetMapping("admin/")
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PackageOrder>> viewAllPackages(){
         return new ResponseEntity<>(packagesService.getAllPackages(),HttpStatus.OK);
     }
 
     //ADMIN
-    @GetMapping("admin/assigned")
+    @GetMapping("/assigned")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PackageOrder>> viewAllAssignedPackages(){
         return new ResponseEntity<>(packagesService.getAllAssignedPackages(),HttpStatus.OK);
     }
 
     //CUSTOMER
-    @GetMapping("/customer/{customerId}/assigned")
+    @GetMapping("/{customerId}/assigned")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<List<PackageOrder>> viewAllAssignedPackagesByCustomer(@PathVariable ObjectId customerId){
         return new ResponseEntity<>(packagesService.getAllAssignedPackagesByCustomer(customerId),HttpStatus.OK);
     }
     //DELIVERYMAN
-    @PutMapping("deliveryMan/{packageId}/delivered")
+    @PutMapping("/{packageId}/delivered")
     @PreAuthorize("hasRole('DELIVERYMAN')")
     public ResponseEntity<PackageOrder> deliverPackage(@PathVariable ObjectId packageId){
         return new ResponseEntity<>(packagesService.markPackageAsDelivered(packageId),HttpStatus.OK);
     }
 
     //CUSTOMER
-    @PutMapping("customer/{packageId}/confirm")
+    @PutMapping("/{packageId}/confirm")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<PackageOrder> ConfirmPackage(@PathVariable ObjectId packageId){
         return new ResponseEntity<>(packagesService.markPackageAsConfirmed(packageId),HttpStatus.OK);

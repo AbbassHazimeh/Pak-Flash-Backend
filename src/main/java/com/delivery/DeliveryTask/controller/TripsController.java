@@ -18,7 +18,7 @@ public class TripsController {
     private final TripsService tripsService;
 
     //ADMIN
-    @PostMapping("admin/trip")
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DeliveryTrip> createDeliveryTrip(@RequestBody DeliveryTrip deliveryTrip){
         DeliveryTrip createdDeliveryTrip = tripsService.createDeliveryTrip(deliveryTrip);
@@ -26,14 +26,14 @@ public class TripsController {
     }
 
     //DELIVERYMAN
-    @GetMapping("deliveryMan/trip/{id}/assigned")
+    @GetMapping("/trip/{id}/assigned")
     @PreAuthorize("hasRole('DELIVERYMAN')")
     public ResponseEntity<List<DeliveryTrip>> viewAllAssignedTrips(@PathVariable ObjectId id){
         return new ResponseEntity<>(tripsService.getAllAssignedTrips(id),HttpStatus.OK);
     }
 
     //DELIVERYMAN
-    @PutMapping("deliveryMan/trip/{tripId}/accept")
+    @PutMapping("/trip/{tripId}/accept")
     @PreAuthorize("hasRole('DELIVERYMAN')")
     public ResponseEntity<DeliveryTrip> acceptTrip(@PathVariable String tripId){
         DeliveryTrip acceptedTrip = tripsService.acceptTrip(tripId);
@@ -44,7 +44,7 @@ public class TripsController {
     }
 
     //DELIVERYMAN
-    @PutMapping("deliveryMan/trip/{tripId}/start")
+    @PutMapping("/trip/{tripId}/start")
     @PreAuthorize("hasRole('DELIVERYMAN')")
     public ResponseEntity<DeliveryTrip> startTrip(@PathVariable String tripId){
         DeliveryTrip startedTrip = tripsService.startTrip(tripId);
@@ -55,7 +55,7 @@ public class TripsController {
     }
 
     //DELIVERYMAN
-    @PutMapping("deliveryMan/trip/{tripId}/end")
+    @PutMapping("/trip/{tripId}/end")
     @PreAuthorize("hasRole('DELIVERYMAN')")
     public ResponseEntity<DeliveryTrip> endTrip(@PathVariable String tripId){
         DeliveryTrip endedTrip = tripsService.markTripAsEnded(tripId);

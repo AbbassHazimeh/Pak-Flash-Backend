@@ -28,6 +28,7 @@ public class SecurityConfig {
         httpSecurity
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/users/admin").permitAll()
                         .requestMatchers("/packages/admin/**","/trips/admin/**","/users/admin/**")
                         .hasRole("ADMIN")
                         .requestMatchers("/packages/customer/**")
@@ -40,4 +41,9 @@ public class SecurityConfig {
 
         return httpSecurity.build();
     }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 }
