@@ -7,7 +7,6 @@ import com.delivery.DeliveryTask.model.PackageOrder;
 import com.delivery.DeliveryTask.model.UserClass;
 import com.delivery.DeliveryTask.repo.PackageRepository;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -50,15 +49,15 @@ public class PackagesService {
         }
         return assignedPackages;
     }
-    public List<PackageOrder> getAllAssignedPackagesByCustomer(ObjectId customerId) {
+    public List<PackageOrder> getAllAssignedPackagesByCustomer(String customerId) {
         List<PackageOrder> assignedPackages = packageRepository.findByCustomerIdAndStatusIn(customerId, List.of(PackageStatus.ASSIGNED));
         if (assignedPackages.isEmpty()) {
             throw new RuntimeException("No assigned packages");
         }
         return assignedPackages;
     }
-    public PackageOrder markPackageAsDelivered(ObjectId id){
-        Optional<PackageOrder> deliveredPackage = packageRepository.findById(String.valueOf(id));
+    public PackageOrder markPackageAsDelivered(String id){
+        Optional<PackageOrder> deliveredPackage = packageRepository.findById(id);
         return deliveredPackage.map(packageOrder -> {
             if(packageOrder.getStatus() == PackageStatus.ASSIGNED){// the package must be assigned to him so the admin must assign before it and then delivery can deliver it
                 packageOrder.setStatus(PackageStatus.DELIVERED);
@@ -68,8 +67,8 @@ public class PackagesService {
             }
         }).orElse(null);
     }
-    public PackageOrder markPackageAsConfirmed(ObjectId id){
-        Optional<PackageOrder> confirmedPackage = packageRepository.findById(String.valueOf(id));
+    public PackageOrder markPackageAsConfirmed(String id){
+        Optional<PackageOrder> confirmedPackage = packageRepository.findById(id);
         return confirmedPackage.map(packageOrder -> {
             if(packageOrder.getStatus() == PackageStatus.DELIVERED){// the package must be Delivered to the customer to confirm it
                 packageOrder.setStatus(PackageStatus.CONFIRMED);

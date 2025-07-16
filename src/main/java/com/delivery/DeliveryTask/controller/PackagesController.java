@@ -3,7 +3,6 @@ package com.delivery.DeliveryTask.controller;
 import com.delivery.DeliveryTask.model.PackageOrder;
 import com.delivery.DeliveryTask.service.PackagesService;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,22 +41,22 @@ public class PackagesController {
     }
 
     //CUSTOMER
-    @GetMapping("/{customerId}/assigned")
+    @GetMapping("/assignedByCustomer")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<List<PackageOrder>> viewAllAssignedPackagesByCustomer(@PathVariable ObjectId customerId){
+    public ResponseEntity<List<PackageOrder>> viewAllAssignedPackagesByCustomer(@RequestParam String customerId){
         return new ResponseEntity<>(packagesService.getAllAssignedPackagesByCustomer(customerId),HttpStatus.OK);
     }
     //DELIVERYMAN
-    @PutMapping("/{packageId}/delivered")
+    @PutMapping("/delivered")
     @PreAuthorize("hasRole('DELIVERYMAN')")
-    public ResponseEntity<PackageOrder> deliverPackage(@PathVariable ObjectId packageId){
+    public ResponseEntity<PackageOrder> deliverPackage(@RequestParam String packageId){
         return new ResponseEntity<>(packagesService.markPackageAsDelivered(packageId),HttpStatus.OK);
     }
 
     //CUSTOMER
-    @PutMapping("/{packageId}/confirm")
+    @PutMapping("/confirm")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<PackageOrder> ConfirmPackage(@PathVariable ObjectId packageId){
+    public ResponseEntity<PackageOrder> ConfirmPackage(@RequestParam String packageId){
         return new ResponseEntity<>(packagesService.markPackageAsConfirmed(packageId),HttpStatus.OK);
     }
 }
