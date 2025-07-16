@@ -6,7 +6,6 @@ import com.delivery.DeliveryTask.enums.PackageStatus;
 import com.delivery.DeliveryTask.model.*;
 import com.delivery.DeliveryTask.repo.DeliveryTripRepository;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public class TripsService {
 
 
     //DELIVERYMAN
-    public List<DeliveryTrip> getAllAssignedTrips(ObjectId id){
+    public List<DeliveryTrip> getAllAssignedTrips(String id){
         return deliveryTripRepository.findByStatusAndDeliveryManId(DeliveryTripStatus.ASSIGNED,id);
     }
 

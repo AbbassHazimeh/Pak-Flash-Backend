@@ -8,7 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,6 @@ public class DeliveryTrip {
     private DeliveryTripStatus status;
     @DBRef
     private List<PackageOrder> packages = new ArrayList<>();
-    @Positive
     @NotNull
     private String deliveryManId;
 

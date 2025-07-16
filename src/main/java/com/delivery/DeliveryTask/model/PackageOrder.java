@@ -28,6 +28,5 @@ public class PackageOrder {
     @Positive
     private String customerId;
     @NotNull
-    @Positive
     private String deliveryTripId;
 }

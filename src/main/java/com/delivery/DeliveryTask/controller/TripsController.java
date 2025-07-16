@@ -28,7 +28,7 @@ public class TripsController {
     //DELIVERYMAN
     @GetMapping("/{id}/assigned")
     @PreAuthorize("hasRole('DELIVERYMAN')")
-    public ResponseEntity<List<DeliveryTrip>> viewAllAssignedTrips(@PathVariable ObjectId id){
+    public ResponseEntity<List<DeliveryTrip>> viewAllAssignedTrips(@PathVariable String id){
         return new ResponseEntity<>(tripsService.getAllAssignedTrips(id),HttpStatus.OK);
     }
 

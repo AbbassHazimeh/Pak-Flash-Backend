@@ -23,6 +23,5 @@ public class DeliveryMan {
     @NotNull
     private DeliveryManStatus status;
     @NotNull
-    @Positive
     private String deliveryTripId;
 }
