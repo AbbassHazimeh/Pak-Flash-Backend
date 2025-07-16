@@ -47,14 +47,14 @@ public class PackagesController {
         return new ResponseEntity<>(packagesService.getAllAssignedPackagesByCustomer(customerId),HttpStatus.OK);
     }
     //DELIVERYMAN
-    @PutMapping("packageId/delivered")
+    @PutMapping("{packageId}/delivered")
     @PreAuthorize("hasRole('DELIVERYMAN')")
     public ResponseEntity<PackageOrder> deliverPackage(@PathVariable String packageId){
         return new ResponseEntity<>(packagesService.markPackageAsDelivered(packageId),HttpStatus.OK);
     }
 
     //CUSTOMER
-    @PutMapping("packageId/confirm")
+    @PutMapping("{packageId}/confirm")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<PackageOrder> ConfirmPackage(@PathVariable String packageId){
         return new ResponseEntity<>(packagesService.markPackageAsConfirmed(packageId),HttpStatus.OK);
