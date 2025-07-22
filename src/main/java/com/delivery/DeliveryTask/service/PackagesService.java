@@ -26,13 +26,17 @@ public class PackagesService {
             throw new InvalidRequestException("Package data must not be null.");
         }
         String customerId = String.valueOf(newPackage.getCustomerId());
-        if (customerId == null || customerId.isBlank()) {
+        if (customerId.isEmpty() || customerId.isBlank()) {
             throw new InvalidRequestException("Customer ID must be provided.");
         }
         newPackage.setStatus(PackageStatus.PENDING);
         newPackage.setDeliveryTripId(null);
-        UserClass user = usersService.getUserById(customerId)
-                .orElseThrow(() -> new UserNotFoundException("Customer not found with ID: " + customerId));
+        Optional<UserClass> optionalUser = usersService.getUserById(customerId);
+        if (optionalUser.isEmpty()) {
+            throw new UserNotFoundException("Customer not found with ID: " + customerId);
+        }
+
+        UserClass user = optionalUser.get();
         if(user.getRole() != Role.CUSTOMER){
             throw new InvalidRequestException("not Customer");
         }

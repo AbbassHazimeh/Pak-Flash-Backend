@@ -3,6 +3,7 @@ package com.delivery.DeliveryTask.enums;
         PENDING,
         ASSIGNED,
         OUT_FOR_DELIVERY,
+        FAILED,
         DELIVERED,
         CONFIRMED
     }

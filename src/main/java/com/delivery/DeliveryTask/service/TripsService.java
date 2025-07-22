@@ -11,6 +11,8 @@ import com.delivery.DeliveryTask.repo.DeliveryTripRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -81,6 +83,8 @@ public class TripsService {
             existingPackage.setPhone(customer.getPhone());
             existingPackage.setStatus(PackageStatus.ASSIGNED);
             existingPackage.setDeliveryTripId(generatedTripId);
+
+            existingPackage.setTime(LocalDateTime.now());
 
             packagesService.savePackage(existingPackage);
             updatedPackages.add(existingPackage);

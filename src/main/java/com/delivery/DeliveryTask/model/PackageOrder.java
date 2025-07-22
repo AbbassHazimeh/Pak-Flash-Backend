@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Data
 @Document(collection = "packageOrders")
 @NoArgsConstructor
@@ -29,4 +31,9 @@ public class PackageOrder {
     private String customerId;
     @NotNull
     private String deliveryTripId;
+    private LocalDateTime time;
 }
+/////
+///maximum time to deliver(use case to apply scheduler)
+///hot to import a file with large number of data(thread pool)
+////
