@@ -11,9 +11,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
+@EnableAsync
 public class AsyncConfiguration implements AsyncConfigurer {
 
-    @Bean
+    @Bean(name = "importTaskExecutor")
     @Primary
     @Override
     public Executor getAsyncExecutor() {
@@ -22,7 +23,7 @@ public class AsyncConfiguration implements AsyncConfigurer {
         executor.setMaxPoolSize(20);
         executor.setQueueCapacity(50);
         executor.setThreadNamePrefix("import-task-");
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());//y3ne el queue malyene w el threads kelon aam ysht8lo fa bkhafef sh8l shwy shwy ka synchronize
         executor.initialize();
         return executor;
     }

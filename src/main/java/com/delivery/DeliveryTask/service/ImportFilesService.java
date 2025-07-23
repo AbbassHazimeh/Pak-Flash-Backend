@@ -7,6 +7,7 @@ import com.delivery.DeliveryTask.model.Customer;
 import com.delivery.DeliveryTask.model.DeliveryMan;
 import com.delivery.DeliveryTask.model.UserClass;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,8 @@ import java.util.concurrent.Executor;
 public class ImportFilesService {
 
     private final UsersService usersService;
+
+    @Qualifier("importTaskExecutor")
     private final Executor executor;
 
     public void importUsersFromFile(MultipartFile file) {
@@ -35,11 +38,11 @@ public class ImportFilesService {
                 executor.execute(() -> {
                     try {
                         UserClass user = parseUserFromCsv(currentLine);
-                        System.out.println("Parsed user with role: " + user.getRole() + " username: " + user.getUsername());
+// i use it for debugging                        System.out.println("Parsed user with role: " + user.getRole() + " username: " + user.getUsername());
                         usersService.createUser(user);
-                        System.out.println("Successfully saved user: " + user.getUsername());
+// i use it for debugging                       System.out.println("Successfully saved user: " + user.getUsername());
                     } catch (Exception e) {
-                        System.err.println("Error processing line: " + currentLine);
+// i use it for debugging                        System.err.println("Error processing line: " + currentLine);
                         e.printStackTrace();
                     }
                 });
