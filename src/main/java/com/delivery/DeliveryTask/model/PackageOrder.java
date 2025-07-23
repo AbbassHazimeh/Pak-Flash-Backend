@@ -33,7 +33,3 @@ public class PackageOrder {
     private String deliveryTripId;
     private LocalDateTime time;
 }
-/////
-///maximum time to deliver(use case to apply scheduler)
-///hot to import a file with large number of data(thread pool)
-////

@@ -27,17 +27,15 @@ public class UsersService {
     }
 
     private void validateUserByRole(UserClass user) {
-
         if (user.getRole() == Role.CUSTOMER) {
             if (user.getCustomer() == null || user.getCustomer().getName() == null || user.getCustomer().getPhone() == null || user.getCustomer().getAddress() == null) {
                 throw new InvalidRequestException("Customer details are incomplete.");
             }
-         if (user.getRole() == Role.DELIVERYMAN) {
+        } else if (user.getRole() == Role.DELIVERYMAN) {
             if (user.getDeliveryMan() == null || user.getDeliveryMan().getName() == null || user.getDeliveryMan().getPhone() == null || user.getDeliveryMan().getStatus() == null || user.getDeliveryMan().getDeliveryTripId() == null) {
                 throw new InvalidRequestException("DeliveryMan details are incomplete.");
             }
-         }
-        }else {
+        } else {
             throw new InvalidRequestException("Invalid user role.");
         }
     }
@@ -73,7 +71,9 @@ public class UsersService {
             throw new InvalidRequestException("User ID must be provided.");
         }
         Optional<UserClass> optionalUser = userRepository.findById(id);
+        System.out.println(optionalUser);
         if (optionalUser.isEmpty()) {
+            System.err.println("Invalid user ID passed: " + id);
             throw new InvalidRequestException("User not found with ID: " + id);
         }
 
