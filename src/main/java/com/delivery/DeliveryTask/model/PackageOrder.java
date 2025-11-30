@@ -30,6 +30,9 @@ public class PackageOrder {
     @Positive
     private String customerId;
     @NotNull
+    @Positive
+    private String deliveryManId;
+    @NotNull
     private String deliveryTripId;
     private LocalDateTime time;
 }

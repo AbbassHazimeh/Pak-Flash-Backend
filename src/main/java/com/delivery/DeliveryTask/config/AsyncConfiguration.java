@@ -23,7 +23,7 @@ public class AsyncConfiguration implements AsyncConfigurer {
         executor.setMaxPoolSize(20);
         executor.setQueueCapacity(50);
         executor.setThreadNamePrefix("import-task-");
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());//y3ne el queue malyene w el threads kelon aam ysht8lo fa bkhafef sh8l shwy shwy ka synchronize
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());//means that the queue is full w and all the threads are busy
         executor.initialize();
         return executor;
     }

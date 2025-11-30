@@ -1,9 +1,9 @@
 package com.delivery.DeliveryTask.controller;
 
 import com.delivery.DeliveryTask.model.DeliveryTrip;
-import com.delivery.DeliveryTask.service.TripsService;
+import com.delivery.DeliveryTask.service.dto.DeliveryTripDTO;
+import com.delivery.DeliveryTask.service.impl.TripsServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,28 +15,28 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/trips")
 public class TripsController {
-    private final TripsService tripsService;
+    private final TripsServiceImpl tripsServiceImpl;
 
     //ADMIN
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<DeliveryTrip> createDeliveryTrip(@RequestBody DeliveryTrip deliveryTrip){
-        DeliveryTrip createdDeliveryTrip = tripsService.createDeliveryTrip(deliveryTrip);
+    public ResponseEntity<DeliveryTripDTO> createDeliveryTrip(@RequestBody DeliveryTripDTO deliveryTrip){
+        DeliveryTripDTO createdDeliveryTrip = tripsServiceImpl.createDeliveryTrip(deliveryTrip);
         return new ResponseEntity<>(createdDeliveryTrip, HttpStatus.CREATED);
     }
 
     //DELIVERYMAN
     @GetMapping("/{id}/assigned")
-    @PreAuthorize("hasRole('DELIVERYMAN')")
-    public ResponseEntity<List<DeliveryTrip>> viewAllAssignedTrips(@PathVariable String id){
-        return new ResponseEntity<>(tripsService.getAllAssignedTrips(id),HttpStatus.OK);
+    @PreAuthorize("hasRole('DELIVERYMAN','ADMIN)")
+    public ResponseEntity<List<DeliveryTripDTO>> viewAllAssignedTrips(@PathVariable String id){
+        return new ResponseEntity<>(tripsServiceImpl.getAllAssignedTrips(id),HttpStatus.OK);
     }
 
     //DELIVERYMAN
     @PutMapping("{tripId}/accept")
     @PreAuthorize("hasRole('DELIVERYMAN')")
-    public ResponseEntity<DeliveryTrip> acceptTrip(@PathVariable String tripId){
-        DeliveryTrip acceptedTrip = tripsService.acceptTrip(tripId);
+    public ResponseEntity<DeliveryTripDTO> acceptTrip(@PathVariable String tripId){
+        DeliveryTripDTO acceptedTrip = tripsServiceImpl.acceptTrip(tripId);
         if (acceptedTrip == null) {
             return ResponseEntity.notFound().build();
         }
@@ -46,8 +46,8 @@ public class TripsController {
     //DELIVERYMAN
     @PutMapping("{tripId}/start")
     @PreAuthorize("hasRole('DELIVERYMAN')")
-    public ResponseEntity<DeliveryTrip> startTrip(@PathVariable String tripId){
-        DeliveryTrip startedTrip = tripsService.startTrip(tripId);
+    public ResponseEntity<DeliveryTripDTO> startTrip(@PathVariable String tripId){
+        DeliveryTripDTO startedTrip = tripsServiceImpl.startTrip(tripId);
         if (startedTrip == null) {
             return ResponseEntity.notFound().build();
         }
@@ -57,8 +57,8 @@ public class TripsController {
     //DELIVERYMAN
     @PutMapping("{tripId}/end")
     @PreAuthorize("hasRole('DELIVERYMAN')")
-    public ResponseEntity<DeliveryTrip> endTrip(@PathVariable String tripId){
-        DeliveryTrip endedTrip = tripsService.markTripAsEnded(tripId);
+    public ResponseEntity<DeliveryTripDTO> endTrip(@PathVariable String tripId){
+        DeliveryTripDTO endedTrip = tripsServiceImpl.markTripAsEnded(tripId);
         if (endedTrip == null) {
             return ResponseEntity.notFound().build();
         }

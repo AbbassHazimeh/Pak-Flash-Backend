@@ -1,6 +1,6 @@
 package com.delivery.DeliveryTask.controller;
 
-import com.delivery.DeliveryTask.service.ImportFilesService;
+import com.delivery.DeliveryTask.service.impl.ImportFilesServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,12 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/import")
 @RequiredArgsConstructor
 public class ImportFilesController {
-    private final ImportFilesService importFilesService;
+    private final ImportFilesServiceImpl importFilesServiceImpl;
 
     @PostMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> importUsers(@RequestParam("file") MultipartFile file) {
-        importFilesService.importUsersFromFile(file);
+        importFilesServiceImpl.importUsersFromFile(file);
         return ResponseEntity.ok("File upload accepted.");
     }
 }

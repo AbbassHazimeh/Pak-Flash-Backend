@@ -2,8 +2,7 @@ package com.delivery.DeliveryTask.enums;
     public enum PackageStatus {
         PENDING,
         ASSIGNED,
-        OUT_FOR_DELIVERY,
-        FAILED,
+        DECLINED,
         DELIVERED,
         CONFIRMED
     }
